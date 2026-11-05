@@ -24,7 +24,7 @@
     "build:main": "tsc -p tsconfig.main.json",
     "build": "tsc -p tsconfig.main.json && tsc -p tsconfig.json --noEmit && vite build",
     "start": "pnpm build && electron .",
-    "test": "pnpm build:main && node --test dist-electron/tests/",
+    "test": "pnpm build:main && node --test \"dist-electron/tests/**/*.test.js\"",
     "dist:mac": "pnpm build && electron-builder --mac",
     "dist:win": "pnpm build && electron-builder --win",
     "dist": "pnpm build && electron-builder --mac --win",
