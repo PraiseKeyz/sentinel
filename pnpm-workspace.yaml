@@ -1,0 +1,11 @@
+# electron-builder packages dependencies from a flat node_modules,
+# so use npm-style hoisting instead of pnpm's symlinked layout.
+nodeLinker: hoisted
+
+# Install scripts we deliberately skip:
+# - ssh2 / cpu-features only compile optional native speedups; ssh2 works in pure JS.
+# - electron-winstaller is for Squirrel installers; we build NSIS instead.
+allowBuilds:
+  cpu-features: false
+  electron-winstaller: false
+  ssh2: false

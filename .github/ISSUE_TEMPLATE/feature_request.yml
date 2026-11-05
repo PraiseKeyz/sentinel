@@ -1,0 +1,22 @@
+name: Feature request
+description: Suggest a new check, integration or improvement
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: For example, "I can't tell when someone is scanning my ports."
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like Sentinel to do?
+      description: If it's a new detection, how would you detect it on the server (log line, command, /proc file)?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered

@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Build and test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    env:
+      # Tests don't launch Electron, so skip the 100 MB binary download.
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm test
+
+  probe:
+    name: Probe script lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+      - run: pnpm build:main
+      # The probe must stay POSIX sh: check its syntax under dash, as on Debian and Ubuntu.
+      - run: |
+          node -e "process.stdout.write(require('./dist-electron/electron/collector.js').collectorScript(60))" > probe.sh
+          dash -n probe.sh
+          sh probe.sh | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const m=require('./dist-electron/electron/parse.js').parseMetrics(s);console.log('probe ok:',m.hostname,m.cpus,'cpus')})"

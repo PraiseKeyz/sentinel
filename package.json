@@ -1,0 +1,93 @@
+{
+  "name": "sentinel",
+  "productName": "Sentinel",
+  "version": "0.1.0",
+  "description": "Desktop security and health monitor for your Linux servers over SSH",
+  "main": "dist-electron/electron/main.js",
+  "author": "Comrac Softwares",
+  "license": "MIT",
+  "private": true,
+  "homepage": "https://github.com/PraiseKeyz/sentinel#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PraiseKeyz/sentinel.git"
+  },
+  "bugs": {
+    "url": "https://github.com/PraiseKeyz/sentinel/issues"
+  },
+  "keywords": ["security", "ssh", "fail2ban", "monitoring", "ddos", "intrusion-detection", "electron", "devops"],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm build:main && concurrently -k \"vite\" \"wait-on tcp:5173 && cross-env VITE_DEV_SERVER_URL=http://localhost:5173 electron .\"",
+    "build:main": "tsc -p tsconfig.main.json",
+    "build": "tsc -p tsconfig.main.json && tsc -p tsconfig.json --noEmit && vite build",
+    "start": "pnpm build && electron .",
+    "test": "pnpm build:main && node --test dist-electron/tests/",
+    "dist:mac": "pnpm build && electron-builder --mac",
+    "dist:win": "pnpm build && electron-builder --win",
+    "dist": "pnpm build && electron-builder --mac --win",
+    "screenshot": "pnpm build && electron scripts/screenshot.cjs"
+  },
+  "packageManager": "pnpm@12.15.0",
+  "build": {
+    "appId": "com.comracsoftwares.sentinel",
+    "productName": "Sentinel",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**",
+      "dist-electron/electron/**",
+      "dist-electron/shared/**",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ]
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "dependencies": {
+    "ssh2": "^1.17.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/ssh2": "^1.15.6",
+    "@vitejs/plugin-react": "^6.2.1",
+    "concurrently": "^10.0.6",
+    "cross-env": "^10.1.0",
+    "electron": "^45.2.2",
+    "electron-builder": "^26.18.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.5",
+    "wait-on": "^9.5.1"
+  }
+}
